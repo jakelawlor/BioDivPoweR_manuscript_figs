@@ -1,1 +1,1 @@
-Code to run analyses and create figures for Tekwa et al., in submission
+Code to run analyses and create figures for manuscript, "Power Analysis For Detecting Richness Change"
