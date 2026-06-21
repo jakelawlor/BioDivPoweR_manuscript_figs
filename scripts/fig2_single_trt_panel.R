@@ -4,6 +4,8 @@ library(BioDivPoweR)
 library(dplyr)
 library(ggplot2)
 
+
+
 # Fig 2 -------------------------------------------------------------------
 # single-treatment fish data
 data("pilot_single_trt")
@@ -30,9 +32,10 @@ p1.a <- last_plot() +
 ## Subsample boots
 single_trt_sub <- subsample_boots(single_trt_boots, 
                                   pilot_single_trt,
-                                  seed = 1)
+                                  seed = 1,
+                                  )
 
-
+single_trt_sub[[5]] %>% glimpse()
 p1.b <- single_trt_sub[[3]]
 p1.c <- single_trt_sub[[4]]
 
@@ -100,10 +103,6 @@ ggsave(full2,
        device = cairo_pdf)
 
 
-# ggsave(full2,
-#        filename = "figures/fig2_single_trt_panel.png",
-#        width = 12*.85,
-#        height = 6*.85)
 
 single_trt_sub[[5]] %>% glimpse()
 #Rows: 1
@@ -115,12 +114,5 @@ single_trt_sub[[5]] %>% glimpse()
 #$ coverage              <dbl> 0.9250003
 #$ raw_richness          <int> 86
 
-pilot <- pilot_single_trt
-
-occ <- colMeans(pilot[,-1]) %>% unlist() %>% unname() %>% sort()
-
-BioDivPoweR:::find_coverage(occ)[208]
-sum(occ > 0)
-pilot_single_trt %>% dim()
 
 rm(list = ls())

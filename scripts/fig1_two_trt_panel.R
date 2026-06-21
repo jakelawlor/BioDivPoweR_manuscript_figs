@@ -1,6 +1,7 @@
 # Figure 1: two-treatment panel figure
 
-devtools::install_github("jakelawlor/BioDivPoweR", force = T)
+# install package BioDivPoweR from attached
+# (remotes::install_github() removed for anonymity)
 library(BioDivPoweR)
 library(dplyr)
 library(ggplot2)
@@ -17,8 +18,8 @@ pilot_two_trts <- pilot_two_trts %>%
 
 
 # get values --------------------------------------------------------------
-# for the figure caption, we'll get the sample sizes, richnesses, 
-# coverages, and rarified richnesses in both groups
+# for the figure caption, we'll get the sample size, richness, 
+# coverage, and rarefied richness in both groups
 
 ## raw richnesses ---- 
 pilot_two_trts %>%
@@ -61,9 +62,7 @@ p1.b <- two_trt_sub[[3]]
 p1.c <- two_trt_sub[[4]] 
 two_trt_sub[[5]] %>% glimpse()
 
-two_trt_sub[[4]] +
-  geom_hline(yintercept = 0.2180057) +
-  geom_vline(xintercept = 18)
+two_trt_sub[[4]]  + ggview::canvas(9,5.5)
 
 ggsave(two_trt_sub[[4]], 
        filename = "example_output.png",
@@ -134,90 +133,9 @@ ggsave(full2,
        width = 12*.9,
        height = 6*.85,
        device = cairo_pdf)
-#
-#ggsave(full2,
-#       filename = "figures/fig1_two_trt_panel.png",
-#       width = 12*.9,
-#       height = 6*.85)
-#
+
 
 two_trt_sub[[5]] %>% glimpse()
 
 rm(list = ls())
-
-# -------------------------------------------------------------------------
-
-
-# -------------------------------------------------------------------------
-
-
-# -------------------------------------------------------------------------
-# ## raw coverage ---- 
-# # find pilot coverage    
-# split <- pilot_two_trts %>%
-#   split(f = .$veg_score)
-# dim(split[[1]])
-# split[[1]] <- split[[1]][,c(T,T, colSums(split[[1]][,-c(1:2)]) > 0)]
-# 
-# dim(split[[2]])
-# split[[2]] <- split[[2]][,c(T,T, colSums(split[[2]][,-c(1:2)]) > 0)]
-# 
-# split_occupancies <- purrr::map(
-#   .x = split,
-#   .f = ~colMeans(.x[,-c(1:2)])
-# )
-# 
-# split_coverages <- purrr::map2(
-#   .x = split_occupancies,
-#   .y = split,
-#   .f = ~find_coverage(.x)[1:nrow(.y)]
-# )
-# 
-# 
-# dplyr::first(which(split_coverages[[1]] >= min(max(split_coverages[[1]]), max(split_coverages[[2]]))))
-# dplyr::first(which(split_coverages[[2]] >= min(max(split_coverages[[2]]), max(split_coverages[[1]]))))
-# 
-# n_sites_equal_coverage <- purrr::map2(
-#   .x = split_coverages[[1]],
-#   .y = split_coverages[[2]],
-#   .f = ~c(
-#     
-#   )
-# )
-# 
-# 
-# # find 
-# # find the first number of sites in 1:k to sample in each community
-# n_sites_equal_coverage <- purrr::map2(
-#   .x = eff_coverage[[1]],
-#   .y = eff_coverage[[2]],
-#   .f = ~c(
-#     # find first number of comm1 samples where coverage is
-#     # greater than the lower max of the two coverage values
-#     "comm1" = dplyr::first(which(.x >= min(max(.x), max(.y)))),
-#     # find first number of comm2 samples where coverage is
-#     # greater than the lower max of the two coverage values
-#     "comm2" = dplyr::first(which(.y >= min(max(.x), max(.y))))
-#   )
-# )
-# 
-# split_coverages_at_pilot_n <- purrr::map2(
-#   .x = split_coverages,
-#   .y = split,
-#   .f = ~.x[nrow(.y)]
-# )
-# 
-# 
-# 
-# pilot_two_trts %>%
-#   split(f = .$veg_score) %>%
-#   purrr::map(
-#     .x = .,
-#     .f = ~find_coverage(colMeans(.x[,-c(1:2)][colSums(.x[,-c(1:2) > 0])]))
-#   )
-# pilot_coverage <- find_coverage( colMeans(pilot[,-c(1)]))[nrow(pilot)]
-# # this makes the entire coverage vector (k = 1-1000),
-# # then draws the nth element, which is the number of sites in the pilot community
-# 
-# 
 

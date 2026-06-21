@@ -55,21 +55,6 @@ run_sims <- function(start_number, n_iter, seed, n_bins){
 
     min_exp_n <- 40
     n_bins <- 40
-  # min_exp_n <- if (nrow(pilot) <= 20) {
-  #   80
-  # } else if (nrow(pilot) >20 & nrow(pilot) <= 30) {
-  #   60
-  # } else {
-  #   40
-  # }
-  # 
-  # n_bins <- if (nrow(pilot) <= 20) {
-  #   80
-  # } else if (nrow(pilot) >20 & nrow(pilot) <= 30) {
-  #   60
-  # } else {
-  #   40
-  # }
     
 
     # run workflow --------------------------------------------------------
@@ -111,18 +96,7 @@ run_sims <- function(start_number, n_iter, seed, n_bins){
     bind_rows(.id = "trial") %>% 
     mutate(trial = as.numeric(trial)) %>%
     mutate(starting_n = start_number)
-  
-#
-  #outdf <- out %>%
-  #  bind_rows(.id = "trial") %>%
-  #  select(-power, -min_detectable_eff_size) %>%
-  #  tidyr::pivot_wider(names_from = group,
-  #                     values_from = n_samples) %>%
-  #  rename(start = achieved,
-  #         rec = target) %>%
-  #  mutate(trial = as.numeric(stringr::str_remove(trial,"run"))) %>%
-  #  mutate(starting_n = start_number)
-  
+ 
   return(outdf)
   
 }
@@ -460,77 +434,6 @@ outdf3 <- outdf2 %>%
   mutate(starting_percent = forcats::fct_reorder(starting_percent, rev(starting_n))) 
   
 
-p_spiral <- outdf3 %>%
-  ggplot(aes(y = recommended.sample_size.total, 
-             x = start.sample_size.total,
-             group = starting_n)) +
-  geom_abline(slope = 1,
-              intercept = 0,
-              linetype = "longdash") +
-  geom_path(linewidth = .25) +
-  geom_point(data = . %>%
-               filter(start.sample_size.total != recommended.sample_size.total),
-               shape = 21,
-             size = 2.5,
-             alpha = .75,
-             aes(fill = trial)) +
-  coord_equal(ylim = c(15,215),
-              xlim = c(15,215)) +
-  scale_fill_viridis_c() +
-  theme_bw() +
-  labs(x = "Pilot Sample Size",
-       y = "Recommended Sample Size",
-       fill = "Iteration") +
-  theme(legend.key.height = unit(40,"pt"),
-        legend.key.width = unit(10,"pt"))
-
-p_spiral + ggview::canvas(5,4)
-
-
-p_spiral2 <- outdf3 %>%
-  ggplot(aes(y = recommended.sample_size.total, 
-             x = start.sample_size.total,
-             group = starting_n,
-             color= factor(starting_n))) +
-  geom_abline(slope = 1,
-              intercept = 0,
-              linetype = "longdash") +
-  geom_path(linewidth = .25) +
-  coord_equal(ylim = c(15,215),
-              xlim = c(15,215)) +
-  scale_fill_viridis_c() +
-  theme_bw() +
-  labs(x = "Pilot Sample Size",
-       y = "Recommended Sample Size",
-       fill = "Iteration") 
-
-p_spiral2 + ggview::canvas(5,4)
-
-p_spiral3 <- outdf3 %>%
-  ggplot(aes(y = recommended.sample_size.total, 
-             x = start.sample_size.total,
-             group = starting_n,
-             color= as.factor(starting_n))) +
-  geom_abline(slope = 1,
-              intercept = 0,
-              linetype = "longdash") +
-  geom_path(linewidth = .25,
-            alpha = .6,
-            show.legend = F,
-            color = "black") +
-  geom_point(data = . %>% filter(trial == 15),
-             shape = 21, 
-             stroke = .3,
-             aes(fill = as.factor(starting_n)),
-             color = "black") +
-  coord_equal(ylim = c(15,215),
-              xlim = c(15,215)) +
-  theme_bw() +
-  labs(x = "Pilot Sample Size",
-       y = "Recommended Sample Size",
-       fill = "Starting Sample Size") 
-
-p_spiral3 + ggview::canvas(5,4)
 
 p_spiral4 <- outdf3 %>%
   ggplot(aes(y = recommended.sample_size.total, 
@@ -647,60 +550,6 @@ p_spiral6 + ggview::canvas(5,4)
 
 # align plots -------------------------------------------------------------
 library(cowplot)
-# aligned <- cowplot::align_plots(
-#   plotlist = list(
-#     p_rich + theme(legend.position = "none",
-#                    axis.text.x = element_blank(),
-#                    axis.title.x = element_blank(),
-#                    axis.ticks.x = element_blank(),
-#                    plot.background = element_blank()) +
-#       labs(y = "Detected\nRichness"),
-#     p_eff_size + theme(legend.position = "none",
-#                        axis.text.x = element_blank(),
-#                        axis.title.x = element_blank(),
-#                        axis.ticks.x = element_blank(),
-#                        plot.background = element_blank()) +
-#       labs(y = "Detectable\nChange"), 
-#     p_time + theme(legend.position = "bottom",
-#                    legend.title.position = "top",
-#                    plot.background = element_blank(),
-#                    legend.key.spacing = unit(2,"pt")) +
-#       labs(fill = "Sample size (proportion of 208 sites)") +
-#       guides(fill = guide_legend(nrow = 1)), 
-#     p_spiral6 + theme(legend.position = "bottom",
-#                       legend.direction = "horizontal",
-#                       legend.title.position = "top",
-#                       legend.key.height = unit(8,"pt"),
-#                       legend.key.width = unit(40,"pt"),
-#                       plot.background = element_blank(),
-#                       legend.margin = margin(t = 0)) +
-#       coord_cartesian(xlim = c(0,210),
-#                       ylim = c(0,210),
-#                       expand = F)))
-# 
-# p1_v1 <- plot_grid(
-#   plot_grid(aligned[[1]],
-#           aligned[[2]],
-#           aligned[[3]],
-#           ncol = 1,
-#           rel_heights = c(1,1,3),
-#           align = "v"),
-#   aligned[[4]],
-#   axis = "b") +
-#   theme(plot.background = element_rect(fill = "white",
-#                                        color = "transparent")) 
-# 
-# p1_v1  + ggview::canvas(10,5.75)
-# 
-# ggsave(p1_v1, 
-#        filename = "figures/fig3_time_and_spiral_panel.pdf",
-#        device = cairo_pdf(),
-#        width = 10,
-#        height = 5.75)
-# 
-
-# try again ---------------------------------------------------------------
-
 aligned2 <- cowplot::align_plots(
   plotlist = list(
     p_rich2 + theme(legend.position = "none",
@@ -779,7 +628,7 @@ ggsave(p1_v2,
 
 
 
-# just the two plots ------------------------------------------------------
+# just the sample size and spiral plots ------------------------------------------------------
 
 p1_v3 <- plot_grid(
   p_time2 + theme(legend.position = "none",
@@ -816,37 +665,4 @@ ggsave(p1_v3,
        height = 4)
 
 
-
-
-# -------------------------------------------------------------------------
-
-
-# -------------------------------------------------------------------------
-
-
-# -------------------------------------------------------------------------
-
-test <- sub[[4]]
-
-
-data2 <- test %>%
-  ggplot2::layer_data() %>% 
-  filter(x > 17)
-
-test +
-  geom_vline(xintercept = 17)
-
-data2 %>%
-  ggplot(aes(x = x, y=y)) +
-  geom_point()  +
-  geom_smooth(method = "lm") +
-  geom_hline(yintercept = -.1)
-  glimpse()
-
-  
-  
-  # cut out everything below absolute sample number of 6 (arbitrary?) 
-  # keep 6 - cut out below 6. 
-  # fix downsampling step so that x values aren't repeated 
-  # keep the highest coverage for each sample number 
-  
+rm(list = ls())
